@@ -2,15 +2,26 @@ import React, {Component} from 'react';
 import PropTypes from 'prop-types';
 
 class Shelf extends Component {
+    state = {
+        shelf: "move"
+    };
+
+    handleChangeShelf = (event, book, shelf) => {
+        if (event.target.value !== shelf) {
+            this.props.changeShelf(event.target.value, book, shelf);
+        }
+    };
+
     render() {
         const { title, books } = this.props;
+        const { shelf } = this.state;
         return (
             <div className="bookshelf">
                 <h2 className="bookshelf-title">{ title }</h2>
                 <div className="bookshelf-books">
                     <ol className="books-grid">
                         {books.map(book => (
-                            <li key={book.title}>
+                            <li key={book.id}>
                                 <div className="book">
                                     <div className="book-cover"
                                          style={{
@@ -18,7 +29,8 @@ class Shelf extends Component {
                                              height: 193,
                                              backgroundImage: `url(${book.url})` }}>
                                         <div className="book-shelf-changer">
-                                            <select>
+                                            <select value={shelf}
+                                                    onChange={e => this.handleChangeShelf(e, book, title)}>
                                                 <option value="move" disabled>Move to...</option>
                                                 <option value="currentlyReading">Currently Reading</option>
                                                 <option value="wantToRead">Want to Read</option>
