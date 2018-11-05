@@ -1,50 +1,23 @@
 import React, {Component} from 'react';
 import PropTypes from 'prop-types';
+import Book from './Book';
 
 class Shelf extends Component {
-    state = {
-        shelf: "move"
-    };
-
-    handleChangeShelf = (event, book, shelf) => {
-        if (event.target.value !== shelf) {
-            this.props.changeShelf(event.target.value, book, shelf);
-        }
-    };
-
     render() {
-        const { title, books } = this.props;
-        const { shelf } = this.state;
+        const { title, books, changeShelf } = this.props;
         return (
             <div className="bookshelf">
                 <h2 className="bookshelf-title">{ title }</h2>
                 <div className="bookshelf-books">
                     <ol className="books-grid">
-                        {books.map(book => (
-                            <li key={book.id}>
-                                <div className="book">
-                                    <div className="book-cover"
-                                         style={{
-                                             width: 128,
-                                             height: 193,
-                                             backgroundImage: `url(${book.url})` }}>
-                                        <div className="book-shelf-changer">
-                                            <select value={shelf}
-                                                    onChange={e => this.handleChangeShelf(e, book, title)}>
-                                                <option value="move" disabled>Move to...</option>
-                                                <option value="currentlyReading">Currently Reading</option>
-                                                <option value="wantToRead">Want to Read</option>
-                                                <option value="read">Read</option>
-                                                <option value="none">None</option>
-                                            </select>
-                                        </div>
-                                    </div>
-
-                                    <div className="book-title">{book.title}</div>
-                                    <div className="book-authors">{book.author}</div>
-                                </div>
-                            </li>
-                        ))}
+                        {books.map(
+                            book => <Book
+                                key={book.id}
+                                title={book.title}
+                                url={book.url}
+                                author={book.author}
+                                changeShelf={e => changeShelf(e.target.value, book, title)}/>
+                        )}
                     </ol>
                 </div>
             </div>

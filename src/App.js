@@ -39,13 +39,15 @@ class BooksApp extends React.Component {
     }
 
     changeShelf = (newShelf, book, oldShelf) => {
-        this.setState(prevState => {
-            const newState = prevState;
-            const books = prevState.shelfs[oldShelf].books.filter(({id}) => id !== book.id);
-            newState.shelfs[oldShelf].books = books;
-            (newState.shelfs[newShelf] && newState.shelfs[newShelf].books.push(book));
-            return newState;
-        });
+        if (newShelf !== oldShelf) {
+            this.setState(prevState => {
+                const newState = prevState;
+                const books = prevState.shelfs[oldShelf].books.filter(({id}) => id !== book.id);
+                newState.shelfs[oldShelf].books = books;
+                (newState.shelfs[newShelf] && newState.shelfs[newShelf].books.push(book));
+                return newState;
+            });
+        }
     };
 
     render() {
@@ -61,13 +63,13 @@ class BooksApp extends React.Component {
                     </div>
                     <div className="list-books-content">
                         <div>
-                            {shelfs.map(shelf => {
-                                return <Shelf
+                            {shelfs.map(
+                                shelf => <Shelf
                                     changeShelf={this.changeShelf}
                                     key={shelf.id}
                                     title={shelf.title}
                                     books={shelf.books}/>
-                            })}
+                            )}
                         </div>
                     </div>
                     <div className="open-search">
