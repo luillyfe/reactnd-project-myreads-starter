@@ -46,8 +46,10 @@ class BooksApp extends Component {
         if (newShelf !== oldShelf) {
             this.setState(prevState => {
                 const newState = {...prevState};
-                const books = prevState.shelfs[oldShelf].books.filter(({id}) => id !== book.id);
-                newState.shelfs[oldShelf].books = books;
+                if (oldShelf) {
+                    const books = prevState.shelfs[oldShelf].books.filter(({id}) => id !== book.id);
+                    newState.shelfs[oldShelf].books = books;
+                }
                 (newState.shelfs[newShelf] && newState.shelfs[newShelf].books.push(book));
                 return newState;
             });
@@ -82,7 +84,9 @@ class BooksApp extends Component {
                         </div>
                     </div>
                 )} />
-                <Route exact path="/search" component={Search} />
+                <Route exact path="/search" render={() => (
+                    <Search changeShelf={this.changeShelf} />
+                )} />
             </div>
         )
     }

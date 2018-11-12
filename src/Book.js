@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 
 class Book extends Component {
     state = {
-        shelf: "move"
+        shelf: this.props.shelf
     };
 
     render() {

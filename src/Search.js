@@ -37,6 +37,17 @@ export default class Search extends Component {
         });
     };
 
+    /**
+     * When a book is added is should send a notification back to the user
+     * */
+    changeShelf = (event, book) => {
+        this.props.changeShelf(event.target.value, book);
+        this.setState(prevState => {
+            const books = prevState.books.filter(({id}) => id !== book.id);
+            return { books };
+        });
+    };
+
     render() {
         const { query, books } = this.state;
         return (
@@ -59,7 +70,7 @@ export default class Search extends Component {
                                 title={book.title}
                                 url={book.url}
                                 author={book.author}
-                                changeShelf={() => {}}/>
+                                changeShelf={e => this.changeShelf(e, book)}/>
                         )}
                     </ol>
                 </div>
