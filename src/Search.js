@@ -16,7 +16,13 @@ export default class Search extends Component {
     search = event => {
         event.preventDefault();
         BooksAPI.search(this.state.query).then(books => {
+            /**
+             * TODO: If data does not produce results, handle undefined.
+             * **/
             books = books.map(book => {
+                /*
+                ** TODO: Refactor duplication of code
+                * */
                 const url = book.imageLinks ? book.imageLinks.smallThumbnail : "https://via.placeholder.com/128x193";
                 const author = book.authors ? book.authors.join("") : "Missing authors info";
                 const bookInfo = {

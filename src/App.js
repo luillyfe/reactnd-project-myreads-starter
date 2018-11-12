@@ -18,10 +18,11 @@ class BooksApp extends Component {
             // TODO: Handle broken image.
             const shelfs = books.reduce((shelfs, book) => {
                 const url = book.imageLinks ? book.imageLinks.smallThumbnail : "https://via.placeholder.com/128x193";
+                const author = book.authors ? book.authors.join("") : "Missing authors info";
                 const bookInfo = {
                     id: book.id,
                     title: book.title,
-                    author: book.authors.join(""),
+                    author,
                     url
                 };
                 if (shelfs[book.shelf]) {
