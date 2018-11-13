@@ -15,21 +15,12 @@ class BooksApp extends Component {
 
     componentDidMount() {
         BooksAPI.getAll().then(books => {
-            // TODO: Handle broken image.
             const shelfs = books.reduce((shelfs, book) => {
-                const url = book.imageLinks ? book.imageLinks.smallThumbnail : "https://via.placeholder.com/128x193";
-                const author = book.authors ? book.authors.join("") : "Missing authors info";
-                const bookInfo = {
-                    id: book.id,
-                    title: book.title,
-                    author,
-                    url
-                };
                 if (shelfs[book.shelf]) {
-                    shelfs[book.shelf].books.push(bookInfo);
+                    shelfs[book.shelf].books.push(book);
                 } else {
                     const books = [];
-                    books.push(bookInfo);
+                    books.push(book);
                     shelfs[book.shelf] = {
                         id: book.shelf,
                         title: book.shelf,
@@ -42,18 +33,32 @@ class BooksApp extends Component {
         });
     }
 
-    changeShelf = (newShelf, book, oldShelf) => {
-        if (newShelf !== oldShelf) {
-            this.setState(prevState => {
-                const newState = {...prevState};
-                if (oldShelf) {
-                    const books = prevState.shelfs[oldShelf].books.filter(({id}) => id !== book.id);
-                    newState.shelfs[oldShelf].books = books;
-                }
-                (newState.shelfs[newShelf] && newState.shelfs[newShelf].books.push(book));
-                return newState;
+    changeShelf = (newShelf, book) => {
+        if (newShelf !== book.shelf) {
+            BooksAPI.update(book, newShelf).then(() => {
+                this.setState(prevState => {
+                    const newState = {...prevState};
+                    if (prevState.shelfs[book.shelf]) {
+                        const books = prevState.shelfs[book.shelf].books.filter(({id}) => id !== book.id);
+                        newState.shelfs[book.shelf].books = books;
+                    }
+
+                    book.shelf = newShelf;
+                    (newState.shelfs[newShelf] && newState.shelfs[newShelf].books.push(book));
+                    return newState;
+                });
             });
         }
+    };
+
+    updateShelfInfo = book => {
+        for (const shelf in this.state.shelfs) {
+            const bookInLibrary = this.state.shelfs[shelf].books.find(b => b.id === book.id);
+            if (bookInLibrary) {
+                return bookInLibrary;
+            }
+        }
+        return book;
     };
 
     render() {
@@ -85,7 +90,8 @@ class BooksApp extends Component {
                     </div>
                 )} />
                 <Route exact path="/search" render={() => (
-                    <Search changeShelf={this.changeShelf} />
+                    <Search updateShelfInfo={this.updateShelfInfo}
+                        changeShelf={this.changeShelf} />
                 )} />
             </div>
         )

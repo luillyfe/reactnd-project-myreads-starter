@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import { Link } from 'react-router-dom';
 import * as BooksAPI from './BooksAPI';
 import Book from "./Book";
+import {update} from "./BooksAPI";
 
 export default class Search extends Component {
     state = {
@@ -9,6 +10,9 @@ export default class Search extends Component {
         query: ""
     };
 
+    /***
+     * TODO: nice to have typeahead bevaviour.
+     * */
     handleChangeQuery = ({target}) => {
         this.setState({ query: target.value });
     };
@@ -19,32 +23,20 @@ export default class Search extends Component {
             /**
              * TODO: If data does not produce results, handle undefined.
              * **/
-            books = books.map(book => {
-                /*
-                ** TODO: Refactor duplication of code
-                * */
-                const url = book.imageLinks ? book.imageLinks.smallThumbnail : "https://via.placeholder.com/128x193";
-                const author = book.authors ? book.authors.join("") : "Missing authors info";
-                const bookInfo = {
-                    id: book.id,
-                    title: book.title,
-                    author,
-                    url
-                };
-                return bookInfo;
-            });
             this.setState({ books });
         });
     };
 
     /**
-     * When a book is added is should send a notification back to the user
+     * TODO: When a book is added is should send a notification back to the user
      * */
     changeShelf = (event, book) => {
-        this.props.changeShelf(event.target.value, book);
+        const newShelf = event.target.value;
         this.setState(prevState => {
             const books = prevState.books.filter(({id}) => id !== book.id);
             return { books };
+        }, () => {
+            this.props.changeShelf(newShelf, book);
         });
     };
 
@@ -65,12 +57,16 @@ export default class Search extends Component {
                 <div className="search-books-results">
                     <ol className="books-grid">
                         {books.map(
-                            book => <Book
-                                key={book.id}
-                                title={book.title}
-                                url={book.url}
-                                author={book.author}
-                                changeShelf={e => this.changeShelf(e, book)}/>
+                            book => {
+                                book = this.props.updateShelfInfo(book);
+                                return <Book
+                                    key={book.id}
+                                    shelf={book.shelf}
+                                    title={book.title}
+                                    imageLinks={book.imageLinks}
+                                    authors={book.authors}
+                                    changeShelf={e => this.changeShelf(e, book)}/>
+                            }
                         )}
                     </ol>
                 </div>

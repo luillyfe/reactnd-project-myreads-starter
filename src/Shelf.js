@@ -12,12 +12,12 @@ class Shelf extends Component {
                     <ol className="books-grid">
                         {books.map(
                             book => <Book
-                                shelf={title}
+                                shelf={book.shelf}
                                 key={book.id}
                                 title={book.title}
-                                url={book.url}
-                                author={book.author}
-                                changeShelf={e => changeShelf(e.target.value, book, title)}/>
+                                imageLinks={book.imageLinks}
+                                authors={book.authors}
+                                changeShelf={e => changeShelf(e.target.value, book)}/>
                         )}
                     </ol>
                 </div>
