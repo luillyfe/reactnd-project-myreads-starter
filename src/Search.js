@@ -1,30 +1,46 @@
 import React, { Component } from "react";
+import { debounce } from "throttle-debounce";
 import { Link } from 'react-router-dom';
 import * as BooksAPI from './BooksAPI';
 import Book from "./Book";
-import {update} from "./BooksAPI";
 
 export default class Search extends Component {
-    state = {
-        books: [],
-        query: ""
+    constructor(props) {
+        super(props);
+        this.state = {
+            books: [],
+            query: "",
+        };
+        this.searchThrottle = debounce(700, this.search);
     };
 
     /***
      * TODO: nice to have typeahead bevaviour.
      * */
-    handleChangeQuery = ({target}) => {
-        this.setState({ query: target.value });
+    handleChangeQuery = (event) => {
+        event.persist();
+        this.setState({ query: event.target.value }, () => {
+            this.searchThrottle(event);
+        });
     };
 
     search = event => {
         event.preventDefault();
-        BooksAPI.search(this.state.query).then(books => {
-            /**
-             * TODO: If data does not produce results, handle undefined.
-             * **/
-            this.setState({ books });
-        });
+        if (this.state.query) {
+            BooksAPI.search(this.state.query).then(books => {
+                if (Array.isArray(books)) {
+                    this.setState({ books });
+                } else if (books) {
+                    /**
+                     * TODO: Show a message to user about their error.
+                     * */
+                    this.setState({ books: [] });
+                    console.error(`${books ? books.error : "error undefined"}`);
+                }
+            });
+        } else {
+            this.setState({ books: [] });
+        }
     };
 
     /**
@@ -48,7 +64,7 @@ export default class Search extends Component {
                         <Link to="/" className="close-search">Close</Link>
                         <div className="search-books-input-wrapper">
                             <form onSubmit={this.search}>
-                            <input type="text" value={query}
+                                <input type="text" value={query}
                                    onChange={this.handleChangeQuery}
                                    placeholder="Search by title or author"/>
                             </form>

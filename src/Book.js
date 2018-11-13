@@ -49,7 +49,7 @@ class Book extends Component {
 }
 
 Book.propTypes = {
-    imageLinks: PropTypes.object.isRequired,
+    imageLinks: PropTypes.object,
     title: PropTypes.string.isRequired,
     authors: PropTypes.array,
     changeShelf: PropTypes.func.isRequired
