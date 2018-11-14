@@ -12,7 +12,7 @@ export const Notification = props => {
             {message}
         </div>
     );
-}
+};
 
 export default class Search extends Component {
     constructor(props) {

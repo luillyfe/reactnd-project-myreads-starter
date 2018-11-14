@@ -3,14 +3,16 @@ import { Route, Link } from 'react-router-dom';
 
 import * as BooksAPI from './BooksAPI';
 import './App.css';
-import Shelf from './Shelf';
+import Shelf, {formatTitle} from './Shelf';
 import Search from './Search';
+import { Notification } from './Search';
 
 class BooksApp extends Component {
     state = {
         shelfs: [{
             id: "Loading", title: "Loading", books: []
-        }]
+        }],
+        notification: { error: true, message: "" }
     };
 
     componentDidMount() {
@@ -46,9 +48,23 @@ class BooksApp extends Component {
                     book.shelf = newShelf;
                     (newState.shelfs[newShelf] && newState.shelfs[newShelf].books.push(book));
                     return newState;
+                }, () => {
+                    this.showNotification({
+                        error: false,
+                        message: `Book added to your library. Shelf: ${ formatTitle(newShelf) }`
+                    });
                 });
             });
         }
+    };
+
+    showNotification = notification => {
+        console.log(notification);
+        this.setState({ notification }, () => {
+            setTimeout(() => {
+                this.setState({ notification: { message: "" } });
+            }, 2500)
+        });
     };
 
     updateShelfInfo = book => {
@@ -58,6 +74,7 @@ class BooksApp extends Component {
                 return bookInLibrary;
             }
         }
+        book.shelf = "none";
         return book;
     };
 
@@ -66,6 +83,7 @@ class BooksApp extends Component {
          * even if that shelf has no changed.
          */
         const shelfs = Object.values(this.state.shelfs);
+        const { notification } = this.state;
         return (
             <div className="app">
                 <Route exact path="/" render={() => (
@@ -73,6 +91,9 @@ class BooksApp extends Component {
                         <div className="list-books-title">
                             <h1>MyReads</h1>
                         </div>
+                        <Notification
+                            error={notification.error}
+                            message={notification.message} />
                         <div className="list-books-content">
                             <div>
                                 {shelfs.map(
