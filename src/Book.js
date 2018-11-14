@@ -6,7 +6,6 @@ class Book extends Component {
         shelf: this.props.shelf
     };
 
-    // TODO: Handle broken image.
     formatInfo({ imageLinks, authors, title }) {
         const url = imageLinks ? imageLinks.smallThumbnail : "https://via.placeholder.com/128x193";
         const authorsFormated = authors ? authors.join("") : "Missing authors info";

@@ -10,6 +10,8 @@ export default class Search extends Component {
         this.state = {
             books: [],
             query: "",
+            message: "",
+            error: true
         };
         this.searchThrottle = debounce(700, this.search);
     };
@@ -31,21 +33,36 @@ export default class Search extends Component {
                 if (Array.isArray(books)) {
                     this.setState({ books });
                 } else if (books) {
-                    /**
-                     * TODO: Show a message to user about their error.
-                     * */
-                    this.setState({ books: [] });
-                    console.error(`${books ? books.error : "error undefined"}`);
+                    this.showNotification({
+                        error: true,
+                        message: "Not results for this query"
+                    });
                 }
             });
         } else {
-            this.setState({ books: [] });
+            this.showNotification({
+                error: true,
+                message: "Not results for this query"
+            });
         }
     };
 
-    /**
-     * TODO: When a book is added is should send a notification back to the user
-     * */
+    showNotification = ({ error, message }) => {
+        const state = error ? {
+                books: [],
+                message,
+                error
+            } : {
+                message,
+                error
+            };
+        this.setState(state, () => {
+            setTimeout(() => {
+                this.setState({message: ""});
+            }, 2500)
+        });
+    };
+
     changeShelf = (event, book) => {
         const newShelf = event.target.value;
         this.setState(prevState => {
@@ -53,11 +70,15 @@ export default class Search extends Component {
             return { books };
         }, () => {
             this.props.changeShelf(newShelf, book);
+            this.showNotification({
+                error: false,
+                message: `Book added to your library. Shelf: ${newShelf}`
+            });
         });
     };
 
     render() {
-        const { query, books } = this.state;
+        const { query, books, message, error } = this.state;
         return (
             <div className="search-books">
                 <div className="search-books-bar">
@@ -69,6 +90,9 @@ export default class Search extends Component {
                                    placeholder="Search by title or author"/>
                             </form>
                         </div>
+                </div>
+                <div className={`alert ${error ? "danger": "success"} ${message ? "fadeIn" : ""}`}>
+                    {message}
                 </div>
                 <div className="search-books-results">
                     <ol className="books-grid">
