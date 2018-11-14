@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import Book from './Book';
 
-const formatTitle = title => {
+export const formatTitle = title => {
     return title.split(/(?=[A-Z])/)
         .map(string => (
             string.charAt(0).toUpperCase() + string.slice(1)

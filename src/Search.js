@@ -3,6 +3,16 @@ import { debounce } from "throttle-debounce";
 import { Link } from 'react-router-dom';
 import * as BooksAPI from './BooksAPI';
 import Book from "./Book";
+import {formatTitle} from "./Shelf";
+
+export const Notification = props => {
+    const { error, message } = props;
+    return (
+        <div className={`alert ${error ? "danger": "success"} ${message ? "fadeIn" : ""}`}>
+            {message}
+        </div>
+    );
+}
 
 export default class Search extends Component {
     constructor(props) {
@@ -72,7 +82,7 @@ export default class Search extends Component {
             this.props.changeShelf(newShelf, book);
             this.showNotification({
                 error: false,
-                message: `Book added to your library. Shelf: ${newShelf}`
+                message: `Book added to your library. Shelf: ${ formatTitle(newShelf) }`
             });
         });
     };
@@ -91,9 +101,7 @@ export default class Search extends Component {
                             </form>
                         </div>
                 </div>
-                <div className={`alert ${error ? "danger": "success"} ${message ? "fadeIn" : ""}`}>
-                    {message}
-                </div>
+                <Notification error={error} message={message} />
                 <div className="search-books-results">
                     <ol className="books-grid">
                         {books.map(
