@@ -2,11 +2,19 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import Book from './Book';
 
+const formatTitle = title => {
+    return title.split(/(?=[A-Z])/)
+        .map(string => (
+            string.charAt(0).toUpperCase() + string.slice(1)
+        ))
+        .join(" ");
+};
+
 const Shelf  = props  => {
     const { title, books, changeShelf } = props;
     return (
         <div className="bookshelf">
-            <h2 className="bookshelf-title">{ title }</h2>
+            <h2 className="bookshelf-title">{ formatTitle(title) }</h2>
             <div className="bookshelf-books">
                 <ol className="books-grid">
                     {books.map(
