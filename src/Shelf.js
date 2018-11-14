@@ -1,28 +1,35 @@
-import React, {Component} from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import Book from './Book';
 
-class Shelf extends Component {
-    render() {
-        const { title, books, changeShelf } = this.props;
-        return (
-            <div className="bookshelf">
-                <h2 className="bookshelf-title">{ title }</h2>
-                <div className="bookshelf-books">
-                    <ol className="books-grid">
-                        {books.map(
-                            book => <Book
-                                key={book.id}
-                                title={book.title}
-                                url={book.url}
-                                author={book.author}
-                                changeShelf={e => changeShelf(e.target.value, book, title)}/>
-                        )}
-                    </ol>
-                </div>
+export const formatTitle = title => {
+    return title.split(/(?=[A-Z])/)
+        .map(string => (
+            string.charAt(0).toUpperCase() + string.slice(1)
+        ))
+        .join(" ");
+};
+
+const Shelf  = props  => {
+    const { title, books, changeShelf } = props;
+    return (
+        <div className="bookshelf">
+            <h2 className="bookshelf-title">{ formatTitle(title) }</h2>
+            <div className="bookshelf-books">
+                <ol className="books-grid">
+                    {books.map(
+                        book => <Book
+                            shelf={book.shelf}
+                            key={book.id}
+                            title={book.title}
+                            imageLinks={book.imageLinks}
+                            authors={book.authors}
+                            changeShelf={e => changeShelf(e.target.value, book)}/>
+                    )}
+                </ol>
             </div>
-        );
-    }
+        </div>
+    );
 }
 
 Shelf.propTypes = {

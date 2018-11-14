@@ -3,12 +3,22 @@ import PropTypes from 'prop-types';
 
 class Book extends Component {
     state = {
-        shelf: "move"
+        shelf: this.props.shelf
+    };
+
+    formatInfo({ imageLinks, authors, title }) {
+        const url = imageLinks ? imageLinks.smallThumbnail : "https://via.placeholder.com/128x193";
+        const authorsFormated = authors ? authors.join("") : "Missing authors info";
+        return {
+            title: title,
+            authors: authorsFormated,
+            url
+        };
     };
 
     render() {
-        const { url, title, author, changeShelf } = this.props;
         const { shelf } = this.state;
+        const { url, title, authors } = this.formatInfo(this.props);
         return (
             <li>
                 <div className="book">
@@ -19,7 +29,7 @@ class Book extends Component {
                              backgroundImage: `url(${url})` }}>
                         <div className="book-shelf-changer">
                             <select value={shelf}
-                                    onChange={changeShelf}>
+                                    onChange={this.props.changeShelf}>
                                 <option value="move" disabled>Move to...</option>
                                 <option value="currentlyReading">Currently Reading</option>
                                 <option value="wantToRead">Want to Read</option>
@@ -30,7 +40,7 @@ class Book extends Component {
                     </div>
 
                     <div className="book-title">{title}</div>
-                    <div className="book-authors">{author}</div>
+                    <div className="book-authors">{authors}</div>
                 </div>
             </li>
         );
@@ -38,9 +48,9 @@ class Book extends Component {
 }
 
 Book.propTypes = {
-    url: PropTypes.string.isRequired,
+    imageLinks: PropTypes.object,
     title: PropTypes.string.isRequired,
-    author: PropTypes.string.isRequired,
+    authors: PropTypes.array,
     changeShelf: PropTypes.func.isRequired
 };
 

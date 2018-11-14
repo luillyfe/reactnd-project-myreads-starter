@@ -186,3 +186,39 @@ body, .app {
     text-align: center;
     font-size: 0.8em;
 }
+
+.alert {
+    margin-top: 1rem;
+    position: absolute;
+    z-index: 5;
+    display: none;
+    padding: .75rem 1.25rem;
+    margin-bottom: 1rem;
+    border: 1px solid transparent;
+    border-radius: .25rem;
+
+    width: 100%;
+    height: 4rem;
+}
+
+.success {
+    color: #155724;
+    background-color: #d4edda;
+    border-color: #c3e6cb;
+}
+
+.danger {
+    color: #721c24;
+    background-color: #f8d7da;
+    border-color: #f5c6cb;
+}
+
+.fadeIn {
+    display: block;
+    animation: fadein 3s ease-in 1s 1 reverse both running;
+}
+
+@keyframes fadein {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+}
